@@ -8,3 +8,14 @@ export type LoginResponse = {
   role: string;
   token: string;
 };
+
+export type AuthState = {
+  token: string | null;
+  role: string | null;
+};
+
+export type AuthContextType = AuthState & {
+  isAuthenticated: boolean;
+  login: (token: string, role: string) => void;
+  logout: () => void;
+};
