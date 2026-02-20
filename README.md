@@ -150,7 +150,7 @@ password
 
 ## Persistence
 
-- SQLite database
+- SQLite database, 2 users and 50 payments seeded
 - Auto migration + seed on first run
 - Payment data stored locally
 
