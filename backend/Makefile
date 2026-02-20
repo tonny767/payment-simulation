@@ -32,6 +32,14 @@ openapi-gen: tool-openapi
 	@echo "generating openapi types/server (oapi-codegen v2)"
 	@oapi-codegen -generate "types,chi-server,spec" -package openapigen -o $(GEN_PKG)/openapi.gen.go $(OPENAPI)
 
+openapi-run: tool-openapi
+	@echo "generating openapi types/server (oapi-codegen v2)"
+	@go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest \
+  -generate types,chi-server,spec \
+  -package openapigen \
+  -o internal/openapigen/openapi.gen.go \
+  ../openapi.yaml
+
 gen-secret:
 	@echo "🔐 Generating JWT secret..."
 	@go run ./script/gen-secret/main.go

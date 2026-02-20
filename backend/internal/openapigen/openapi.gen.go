@@ -83,8 +83,12 @@ type GetDashboardV1PaymentsParams struct {
 
 	// Status status of payment (completed , processing , or failed)
 	Status *string `form:"status,omitempty" json:"status,omitempty"`
-	Page   *int    `form:"page,omitempty" json:"page,omitempty"`
-	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Page page number (starting from 1)
+	Page *int `form:"page,omitempty" json:"page,omitempty"`
+
+	// Limit limit of items per page
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // PostDashboardV1AuthLoginJSONRequestBody defines body for PostDashboardV1AuthLogin for application/json ContentType.
@@ -354,24 +358,24 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xWS2/bRhD+K4tpDzFKi1STQ0CgQN1XkMIBjKZuD64Rr8mRtCn3kd2hY9XQfy9mlxIp",
-	"k6qduMjJFuf5ffPYuYPKamcNGgpQ3oGTXmok9PFXsJ74b42h8sqRsgZK+NFqLY8Dsi5hLVhLLBQ2dZgJ",
-	"FlojnCRCb0Ipro4rj6z3TtKVeOY8LtStuDq+Et8J9nskrqS2rWGhsWJPLkN19JeBDBTH/dCiX0MGRmqE",
-	"MiWXQahWqCVnibdSu4ZFg5CQAa1d1CevzBI2m00GHoOzJmBEeWqXyvzWfeEPlTWEJiKXzjWqkow8fx8Y",
-	"/t0g4tceF1DCV3lPYp6kIT8P6FOwffY8UuuNIPs3GiFNLdqAXiizsF7HOLDJ4EyuNRo6VYE+KzHnrUNP",
-	"CruiRm/xf0Wow0O5d+E5k4486b1cx9+WZMP2nUAZwmVEutO11++xoinsnV/BuAYw37ZaS7/+H5AylgYJ",
-	"66kMM1hI1RySOW8rDIFbZFJ+EHgnepe6eKBhWn39qcx0VLDXcyNbWlmv/sH6Z++tfwQv3QhELtpoj4ZY",
-	"KaEOnfcS3qgIVVhuvRvZqDp1JGRwI5u2q0GNUL4o5hloDEEuGcL5vtdS6EOeIsrHzUqCN0HLSR9LWSNS",
-	"/TjUNmrlsWYF2QTo40X8O87ut0iNe9siAhwXdQd5uFgej368dnjrfGiV51JcpDT6KJejHtlNxxhC32l9",
-	"ZrJRFX7f/Z5VVo8zyGCwFss7SBsHSqgl4TEpjVM2qt4PNJ9S0uirlbyf05vuqziZsgkkqQ37Frv5FZno",
-	"B1JkzG83vFPEjqiLy3fEG2qphiPc5+Jtg5OCVMyxZGKmMwhYtV7R+i03YQp5jdKj5zbuf/2y5f3XP3/f",
-	"PmDsKUl7gCsil4aCX4eYhKJE7PqVPZVmeeKcODl7zUOLPqSRmc+KWcGpW4dGOgUlPJ8Vs+eQgZO0ilnl",
-	"tQyrayt9nd/Mc27pvOFHMFJmQywjExen7nXN+8kG+mlr9MecAcVnE1JXY6AfbL1+wuY+XBsnQ/hofT1d",
-	"heFMJR8Di8vJzdubkG/x/jXwbVEcWlc7vXz/ZNhk8KKYP2w13uixa3ZLOXoVHxWtRIQivhE7KKy5X7bh",
-	"q77EiZq9wmHJzrbq2d6RdzGddK+Sxztrk92/AtP4CrsQXSLi2cPTe3Tolku7YPhejEp9N2npeHsO7Wpc",
-	"yLYhKPnZUkbpVsf/x/fKtMNGaUUHPBYZaHnbuSyKBwJcfk5nTV1+T+yvbivFWg/30cUlpzhoPxVoUM/w",
-	"Hz2X76w+qfe2180TiLl/K34hbrYIxPZTum7Q32ynqPVNt7PLPG9sJZuVDVS+LF4WsLnc/BsAAP//3b3D",
-	"uWkNAAA=",
+	"H4sIAAAAAAAC/7xWS2/bRhD+K4ttDzZKm1STQ0CgB/cVpHAAo6nbg2vEa3Ikbcp9ZHboWDX034vZpURK",
+	"pGonLppLLM7jm29eOw+ycsY7C5aCLB+kV6gMEGD8FRwS/19DqFB70s7KUv7gjFEnAViXoBasJeYamjqc",
+	"ChY6K7wiArShFDcnFQLrvVd0I448wlzfi5uTG/GdYL/H4kYZ11oWWid25CpUx39amUnNuB9bwJXMpFUG",
+	"ZJmCy2SolmAURwn3yviGRQNImUla+ahPqO1CrtfrTCIE72yAyPLcLbT9tfvCHypnCWxkrrxvdKWYef4h",
+	"MP2HAeLXCHNZyq/yPol5kob8MgAmsN3sIVCLVpD7C6xQthZtABTazh2aiCPXmbxQKwOWznWgLwrMo/OA",
+	"pKEravQW/9YEJjwWewfPkXTJU4hqFX87Ug3bdwJtCRaR6VbX3X6Aiqa4d34F8xrQfNcao3D1HzBlLg0Q",
+	"1FMRZnKudHNI5tFVEAK3yKT8IPFO9D518UDDtub2czPTpYK9XlrV0tKh/hvqnxAdPiEv3QjEXLTRHiyx",
+	"UmIdOu+lfKsjVeG49e5Uo+vUkTKTd6ppuxrUIMuXxSyTBkJQC6Zwueu1FOaQp8jyabOS6E2k5azH0s6K",
+	"VD+G2qBWCDUrqCbIHi/y3+Zsv0Vq2NkWkeC4qFvKw8XydPbjtcNb52OrkUtxlcLoUa5HPbKdjjGFvtP6",
+	"yGYF/xvDZnKwC8sHmdaMLGWtCE5IG5iy0fWe9yklA1gt1X4gb7uv4mzKJpCiNuxabIdWZKKfQpFxUruJ",
+	"ncrmKF9x446SBUbp4dz2saBrYFKQKjiWTAxyJgNULWpavePOS5C3oBCQe7f/9fMm77/88dvm1WJPSdoT",
+	"XBL5NAn8JMQgNKXErl67c2UXZ96Ls4s3PKmAIc3J7LQ4LTh058Eqr2UpX5wWpy9kJr2iZYwqr1VY3jqF",
+	"dX43y7mP84ZfvpgyF2IZOXFx1N7UvJRcoB83Rr/PmFB8K2VqZQj0vatXz1jXh2vjVQifHNbTVRgOUvIx",
+	"sLieXLe9CWEL+yfAt0VxaEdt9fLdO2GdyZfF7HGr8RqPXbPdxNGr+KRpKSIV8Y3YUmHN3bINn/IFTNTs",
+	"NQxLdrFRz3Yuu6vpoHuVPB5X62z/9EvjK9xcdIGIo8en9/jQAZd2wfCRGJV6PwCvFiDSwyqOAikkBpuj",
+	"M2J2CIdtdlBqmKu2IVnyy6atNq2Jf49Pmn34RhtNTD+eUcIDis77FHDUPoBcZNKo+w66KB4J5PpL+nXq",
+	"iHxm13a7LnbQcMtdXXOIg6bWgQZdEv6lk/Ot1Wd19OZQekZi9s/O/yk3GwZi8ykdSoB3m9lsselegjLP",
+	"G1epZukCla+KV4VcX6//CQAA//+khsp3tA0AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

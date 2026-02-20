@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	oapinethttpmw "github.com/oapi-codegen/nethttp-middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type Server struct {
@@ -42,6 +44,20 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 			AllowCredentials: true,
 			MaxAge:           300, 
 	}))
+
+	r.Get("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		spec, err := openapigen.GetSwagger()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(spec)
+	})
+
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger.json"),
+	))
 
 	r.Route("/", func(api chi.Router) {
 		api.Use(oapinethttpmw.OapiRequestValidatorWithOptions(
