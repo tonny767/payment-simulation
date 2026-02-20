@@ -7,9 +7,14 @@ export type Payment = {
 };
 
 export type PaymentsResponse = {
-  data: {
-    payments: Payment[];
-  };
+  payments: Payment[];
+};
+export type PaymentSummary = {
+  completed: number;
+  failed: number;
+  processing: number;
+  total: number;
+  total_amount: number;
 };
 export type PaymentsParams = {
   status?: "completed" | "processing" | "failed";

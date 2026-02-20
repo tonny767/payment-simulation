@@ -63,3 +63,28 @@ func (a *PaymentHandler) GetDashboardV1Payments(
 		return
 	}
 }
+
+func (a *PaymentHandler) GetDashboardV1PaymentSummary(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	summary, err := a.paymentUC.GetPaymentSummary()	
+	if err != nil {
+		transport.WriteError(w, err)
+		return
+	}
+
+	resp := openapigen.PaymentSummaryResponse{
+			Completed:   summary.Completed,
+			Failed:      summary.Failed,
+			Processing:  summary.Processing,
+			Total:       summary.Total,
+			TotalAmount: summary.TotalAmount,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		transport.WriteAppError(w, entity.ErrorInternal("internal server error"))
+		return
+	}
+}

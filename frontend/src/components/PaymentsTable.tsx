@@ -12,6 +12,7 @@ import {
   FormControl,
   InputLabel,
   TableSortLabel,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -50,19 +51,22 @@ export default function PaymentsTable() {
 
   if (isLoading)
     return (
-      <Paper sx={{ p: 3, textAlign: "center" }}>
+      <Paper className="p-3 text-center">
         <CircularProgress />
       </Paper>
     );
 
-  if (isError) return <Paper sx={{ p: 3 }}>Failed to load payments</Paper>;
+  if (isError) return <Paper className="p-3">Failed to load payments</Paper>;
 
-  const payments = data?.data?.payments || [];
+  const payments = data?.payments || [];
 
   return (
     <Stack spacing={2}>
       {/* Table */}
       <Paper>
+        <Typography variant="h5" className="p-4 font-semibold">
+          Payments
+        </Typography>
         <FormControl size="small" sx={{ minWidth: 200, marginLeft: 2 }}>
           <InputLabel>Status</InputLabel>
           <Select

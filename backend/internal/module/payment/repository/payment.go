@@ -10,6 +10,7 @@ import (
 
 type PaymentRepository interface {
 	GetPaymentList(sort string, status string) ([]entity.Payment, error)
+	GetPaymentSummary() (entity.PaymentSummary, error)
 }
 
 type Payment struct {
@@ -83,4 +84,24 @@ func parseSortSQL(sort string) string {
 		}
 
 	return ""
+}
+
+func (r *Payment) GetPaymentSummary() (entity.PaymentSummary, error) {
+	query := `
+		SELECT
+			SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+			SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed,
+			SUM(CASE WHEN status = 'processing' THEN 1 ELSE 0 END) AS processing,
+			COUNT(1) AS total,
+			SUM(amount) AS total_amount
+		FROM payments
+	`
+	row := r.db.QueryRow(query)
+
+	var summary entity.PaymentSummary
+	if err := row.Scan(&summary.Completed, &summary.Failed, &summary.Processing, &summary.Total, &summary.TotalAmount); err != nil {
+		return entity.PaymentSummary{}, entity.WrapError(err, entity.ErrorCodeInternal, "db error")
+	}
+
+	return summary, nil
 }

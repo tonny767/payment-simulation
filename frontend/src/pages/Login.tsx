@@ -3,6 +3,7 @@ import { TextField, Button, Paper, Typography, CircularProgress } from "@mui/mat
 import { useNavigate } from "react-router";
 import { loginRequest } from "@/features/auth/api"; // adjust path
 import { useAuth } from "@/features/auth/auth-context"; // adjust path
+import axios from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -25,10 +26,12 @@ export default function LoginPage() {
       login(res.token, res.role);
 
       navigate("/dashboard");
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Invalid email or password");
-    } finally {
-      setLoading(false);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message ?? "Something went wrong");
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 

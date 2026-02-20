@@ -1,6 +1,12 @@
 "use client";
 
-export default function Money({ value }: { value: number | null | undefined }) {
+export default function Money({
+  value,
+  size = "default",
+}: {
+  value: number | null | undefined;
+  size?: "small" | "default" | "big";
+}) {
   const moneyFormatter = Intl.NumberFormat("id-ID", {
     currency: "IDR",
     style: "currency",
@@ -8,5 +14,15 @@ export default function Money({ value }: { value: number | null | undefined }) {
     maximumFractionDigits: 2,
   });
 
-  return <p className="bg-muted text-sm">{value != null ? moneyFormatter.format(value) : "N/A"}</p>;
+  const sizeClasses = {
+    small: "text-xs",
+    default: "text-sm",
+    big: "text-2xl",
+  };
+
+  return (
+    <p className={`bg-muted ${sizeClasses[size]}`}>
+      {value != null ? moneyFormatter.format(value) : "N/A"}
+    </p>
+  );
 }

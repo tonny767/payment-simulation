@@ -16,7 +16,7 @@ export default function NotFound() {
           variant="contained"
           color="error"
           onClick={() => navigate("/logout")}
-          className="ml-4"
+          sx={{ ml: 2 }}
         >
           Logout
         </Button>

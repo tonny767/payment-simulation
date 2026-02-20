@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import { useAuth } from "@/features/auth/auth-context";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
-import Unauthorized from "@/pages/Unauthorized";
 import AppLayout from "@/components/AppLayout";
 import Logout from "@/pages/Logout";
 import NotFound from "@/pages/NotFound";
@@ -12,7 +11,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/unauthorized" element={<Unauthorized />} />
         <Route
           path="/"
           element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />}
