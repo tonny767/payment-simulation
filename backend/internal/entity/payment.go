@@ -17,3 +17,10 @@ type PaymentSummary struct {
 	Total       *int     `json:"total,omitempty"`
 	TotalAmount *float32 `json:"total_amount,omitempty"`
 }
+
+type PaymentFilter struct {
+	Sort   string
+	Status string
+	Page   int
+	Limit  int
+}

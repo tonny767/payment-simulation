@@ -6,7 +6,7 @@ import (
 )
 
 type PaymentUsecase interface {
-	GetPaymentList(sort string, status string) ([]entity.Payment, error)
+	GetPaymentList(filter entity.PaymentFilter) ([]entity.Payment,int, error)
 	GetPaymentSummary() (entity.PaymentSummary, error)
 }
 
@@ -18,15 +18,15 @@ func NewPaymentUsecase(repo repository.PaymentRepository) *Payment {
 	return &Payment{repo: repo}
 }
 
-func (p *Payment) GetPaymentList(sort string, status string) ([]entity.Payment, error) {
-	payments, err := p.repo.GetPaymentList(sort, status)
+func (p *Payment) GetPaymentList(filter entity.PaymentFilter) ([]entity.Payment, int, error) {
+	payments, total, err := p.repo.GetPaymentList(filter)
 	if err != nil {
-		return nil, err
+		return nil, total ,err
 	}
 	if len(payments) == 0 {
-		return nil, entity.ErrorNotFound("payments not found")
+		return nil, total, entity.ErrorNotFound("payments not found")
 	}
-	return payments, nil
+	return payments, total, nil
 }
 
 func (p * Payment) GetPaymentSummary() (entity.PaymentSummary, error) {

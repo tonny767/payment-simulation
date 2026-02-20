@@ -8,6 +8,7 @@ export type Payment = {
 
 export type PaymentsResponse = {
   payments: Payment[];
+  total: number;
 };
 export type PaymentSummary = {
   completed: number;
@@ -19,4 +20,6 @@ export type PaymentSummary = {
 export type PaymentsParams = {
   status?: "completed" | "processing" | "failed";
   sort?: string; // example: "-amount,created_at"
+  page?: number;
+  limit?: number;
 };

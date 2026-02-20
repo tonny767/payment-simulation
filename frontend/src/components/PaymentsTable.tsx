@@ -14,6 +14,8 @@ import {
   TableSortLabel,
   Typography,
   Box,
+  TableFooter,
+  TablePagination,
 } from "@mui/material";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -30,14 +32,20 @@ export default function PaymentsTable() {
   const [sortField, setSortField] = useState<SortField>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
+  //pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const sortParam = (sortDirection === "desc" && !!sortField ? "-" : "") + sortField;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["payments", status, sortParam],
+    queryKey: ["payments", status, sortParam, page, rowsPerPage],
     queryFn: () =>
       fetchPayments({
         status: status || undefined,
         sort: sortParam || undefined,
+        page: page + 1,
+        limit: rowsPerPage,
       }),
   });
 
@@ -48,6 +56,16 @@ export default function PaymentsTable() {
       setSortField(field);
       setSortDirection("asc");
     }
+    setPage(0);
+  };
+
+  const handleChangePage = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   if (isLoading)
@@ -75,7 +93,10 @@ export default function PaymentsTable() {
             <Select
               value={status}
               label="Status"
-              onChange={(e) => setStatus(e.target.value as typeof status)}
+              onChange={(e) => {
+                setStatus(e.target.value as typeof status);
+                setPage(0);
+              }}
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
@@ -129,6 +150,18 @@ export default function PaymentsTable() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                page={page}
+                count={data?.total || 0}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}
+              />
+            </TableRow>
+          </TableFooter>
         </Table>
       </Paper>
     </Stack>

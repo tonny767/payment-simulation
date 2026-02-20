@@ -35,7 +35,21 @@ func (a *PaymentHandler) GetDashboardV1Payments(
 			status = *params.Status
 	}
 
-	payments, err := a.paymentUC.GetPaymentList(sort, status)	
+	var limit int
+	if params.Limit != nil {
+			limit = *params.Limit
+	}
+	var page int
+	if params.Page != nil {
+			page = *params.Page
+	}
+
+	payments, total, err := a.paymentUC.GetPaymentList(entity.PaymentFilter{
+		Sort:   sort,
+		Status: status,
+		Page:   page,
+		Limit:  limit,
+	})	
 	if err != nil {
 		transport.WriteError(w, err)
 		return
@@ -55,6 +69,7 @@ func (a *PaymentHandler) GetDashboardV1Payments(
 
 	resp := openapigen.PaymentListResponse{
 		Payments: &apiPayments,
+		Total:    &total,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

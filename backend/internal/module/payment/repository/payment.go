@@ -9,7 +9,7 @@ import (
 )
 
 type PaymentRepository interface {
-	GetPaymentList(sort string, status string) ([]entity.Payment, error)
+	GetPaymentList(filter entity.PaymentFilter) ([]entity.Payment, int, error)
 	GetPaymentSummary() (entity.PaymentSummary, error)
 }
 
@@ -21,36 +21,62 @@ func NewPaymentRepo(db *sql.DB) *Payment {
 	return &Payment{db: db}
 }
 
-func (r *Payment) GetPaymentList(sort string, status string) ([]entity.Payment, error) {
-	query := `SELECT id, amount, merchant, status, created_at FROM payments`
+func (r *Payment) GetPaymentList(filter entity.PaymentFilter) ([]entity.Payment, int, error) {
+	baseQuery := "FROM payments"
 	var args []interface{}
 	conds := []string{}
-	if status != "" {
+
+	if filter.Status != "" {
 		validStatuses := map[string]bool{
 			"completed":  true,
 			"processing": true,
 			"failed":     true,
 		}
 
-		if validStatuses[status] {
+		if validStatuses[filter.Status] {
 			conds = append(conds, "status = ?")
-			args = append(args, status)
+			args = append(args, filter.Status)
 		}
 	}
-	
+
 	if len(conds) > 0 {
-		query += " WHERE " + strings.Join(conds, " AND ")
+		baseQuery += " WHERE " + strings.Join(conds, " AND ")
 	}
 
-	if sort != "" {
-		orderClause := parseSortSQL(sort)
+	countQuery := "SELECT COUNT(*) " + baseQuery
+
+	// get count first
+	var total int
+	err := r.db.QueryRow(countQuery, args...).Scan(&total)
+	if err != nil {
+		return nil, 0, entity.WrapError(err, entity.ErrorCodeInternal, "count error")
+	}
+
+	// build final query
+	query := "SELECT id, amount, merchant, status, created_at " + baseQuery
+
+	if filter.Sort != "" {
+		orderClause := parseSortSQL(filter.Sort)
 		if orderClause != "" {
 			query += " ORDER BY " + orderClause
 		}
 	}
-	rows, err := r.db.Query(query, args...)
+
+	if filter.Page <= 0 {
+		filter.Page = 1
+	}
+	if filter.Limit <= 0 {
+		filter.Limit = 10
+	}
+
+	offset := (filter.Page - 1) * filter.Limit
+	query += " LIMIT ? OFFSET ?"
+
+	dataArgs := append(args, filter.Limit, offset)
+
+	rows, err := r.db.Query(query, dataArgs...)
 	if err != nil {
-		return nil, entity.WrapError(err, entity.ErrorCodeInternal, "db error")
+		return nil, 0, entity.WrapError(err, entity.ErrorCodeInternal, "db error")
 	}
 	defer rows.Close()
 
@@ -58,12 +84,12 @@ func (r *Payment) GetPaymentList(sort string, status string) ([]entity.Payment, 
 	for rows.Next() {
 		var p entity.Payment
 		if err := rows.Scan(&p.Id, &p.Amount, &p.Merchant, &p.Status, &p.CreatedAt); err != nil {
-			return nil, entity.WrapError(err, entity.ErrorCodeInternal, "db error")
+			return nil, 0, entity.WrapError(err, entity.ErrorCodeInternal, "db error")
 		}
 		payments = append(payments, p)
 	}
 
-	return payments, nil
+	return payments, total, nil
 }
 
 func parseSortSQL(sort string) string {
