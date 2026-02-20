@@ -35,7 +35,7 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 	r := chi.NewRouter()
 	
 	r.Use(cors.Handler(cors.Options{
-			AllowedOrigins:   []string{"http://localhost:5173"}, // your frontend
+			AllowedOrigins:   []string{"http://localhost:3000"}, // your frontend
 			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 			ExposedHeaders:   []string{"Link"},

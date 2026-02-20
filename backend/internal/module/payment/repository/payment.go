@@ -32,8 +32,6 @@ func (r *Payment) GetPaymentList(sort string, status string) ([]entity.Payment, 
 			"failed":     true,
 		}
 
-		fmt.Println("status: ", status)
-
 		if validStatuses[status] {
 			conds = append(conds, "status = ?")
 			args = append(args, status)
