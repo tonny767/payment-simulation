@@ -1,6 +1,6 @@
 # Payment Simulation
 
-This is fulltsack project related Payment using golang as backend and React Vite as frontend
+This is fullstack project related Payment using golang as backend and React Vite as frontend
 
 list of tools version of your machine:
 
