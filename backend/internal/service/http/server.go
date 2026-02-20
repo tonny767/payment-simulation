@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/durianpay/fullstack-boilerplate/internal/openapigen"
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	oapinethttpmw "github.com/oapi-codegen/nethttp-middleware"
@@ -39,13 +40,16 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 			AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 			ExposedHeaders:   []string{"Link"},
 			AllowCredentials: true,
-			MaxAge:           300, // preflight cache duration in seconds
+			MaxAge:           300, 
 	}))
 
 	r.Route("/", func(api chi.Router) {
 		api.Use(oapinethttpmw.OapiRequestValidatorWithOptions(
 			swagger,
 			&oapinethttpmw.Options{
+				Options: openapi3filter.Options{
+            AuthenticationFunc: JWTAuthMiddleware(),
+        },
 				DoNotValidateServers:  true,
 				SilenceServersWarning: true,
 			},
