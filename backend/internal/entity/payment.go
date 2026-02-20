@@ -17,4 +17,3 @@ type PaymentSummary struct {
 	Total       *int     `json:"total,omitempty"`
 	TotalAmount *float32 `json:"total_amount,omitempty"`
 }
-}

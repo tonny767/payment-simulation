@@ -147,8 +147,6 @@ paths:
           schema:
             type: string
           description: status of payment (completed , processing , or failed)
-        - in: query
-          schema:
       security:
         - bearerAuth: []
       responses:

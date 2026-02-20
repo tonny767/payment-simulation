@@ -13,6 +13,7 @@ import {
   InputLabel,
   TableSortLabel,
   Typography,
+  Box,
 } from "@mui/material";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -64,22 +65,25 @@ export default function PaymentsTable() {
     <Stack spacing={2}>
       {/* Table */}
       <Paper>
-        <Typography variant="h5" className="p-4 font-semibold">
-          Payments
-        </Typography>
-        <FormControl size="small" sx={{ minWidth: 200, marginLeft: 2 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={status}
-            label="Status"
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
-            <MenuItem value="processing">Processing</MenuItem>
-            <MenuItem value="failed">Failed</MenuItem>
-          </Select>
-        </FormControl>
+        <Box display="flex" justifyContent="space-between" alignItems="center" p={2}>
+          <Typography variant="h5" fontWeight={600}>
+            Payments
+          </Typography>
+
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={status}
+              label="Status"
+              onChange={(e) => setStatus(e.target.value as typeof status)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="processing">Processing</MenuItem>
+              <MenuItem value="failed">Failed</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         <Table>
           <TableHead>
             <TableRow>
