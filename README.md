@@ -20,6 +20,7 @@ Docker
 To run by using Docker (recommended), follow this:
 
 ```bash
+download and open Docker-Desktop
 brew install docker
 brew install docker-compose
 
